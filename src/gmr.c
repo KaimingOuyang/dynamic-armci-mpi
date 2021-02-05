@@ -452,6 +452,17 @@ int gmr_put_typed(gmr_t *mreg, void *src, int src_count, MPI_Datatype src_type,
       MPI_Accumulate(src, src_count, src_type, grp_proc,
                      (MPI_Aint) disp, dst_count, dst_type, MPI_REPLACE, mreg->window);
   } else {
+      MPI_Info async_info;
+      MPI_Info_create(&async_info);
+
+      if(armci_async_config_flag == 2) {
+        MPI_Info_set(async_info, "async_config", "off");
+      } else{
+        MPI_Info_set(async_info, "async_config", "on");
+      }
+
+      MPI_Win_info_set(mreg->window, async_info);
+      MPI_Info_free(&async_info);
       MPI_Put(src, src_count, src_type, grp_proc,
               (MPI_Aint) disp, dst_count, dst_type, mreg->window);
   }
@@ -514,6 +525,18 @@ int gmr_get_typed(gmr_t *mreg, void *src, int src_count, MPI_Datatype src_type,
       MPI_Get_accumulate(NULL, 0, MPI_BYTE, dst, dst_count, dst_type, grp_proc,
                          (MPI_Aint) disp, src_count, src_type, MPI_NO_OP, mreg->window);
   } else {
+
+      MPI_Info async_info;
+      MPI_Info_create(&async_info);
+
+      if(armci_async_config_flag == 2) {
+        MPI_Info_set(async_info, "async_config", "off");
+      } else{
+        MPI_Info_set(async_info, "async_config", "on");
+      }
+
+      MPI_Win_info_set(mreg->window, async_info);
+      MPI_Info_free(&async_info);
       MPI_Get(dst, dst_count, dst_type, grp_proc,
               (MPI_Aint) disp, src_count, src_type, mreg->window);
   }
@@ -573,6 +596,17 @@ int gmr_accumulate_typed(gmr_t *mreg, void *src, int src_count, MPI_Datatype src
   ARMCII_Assert_msg(disp >= 0 && disp < mreg->slices[proc].size, "Invalid remote address");
   ARMCII_Assert_msg(disp + dst_count*extent <= mreg->slices[proc].size, "Transfer is out of range");
 
+  MPI_Info async_info;
+      MPI_Info_create(&async_info);
+
+      if(armci_async_config_flag == 2) {
+        MPI_Info_set(async_info, "async_config", "off");
+      } else{
+        MPI_Info_set(async_info, "async_config", "on");
+      }
+
+      MPI_Win_info_set(mreg->window, async_info);
+      MPI_Info_free(&async_info);
   MPI_Accumulate(src, src_count, src_type, grp_proc, (MPI_Aint) disp, dst_count, dst_type, MPI_SUM, mreg->window);
 
   return 0;
