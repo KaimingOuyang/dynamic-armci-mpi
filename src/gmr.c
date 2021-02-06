@@ -461,7 +461,7 @@ int gmr_put_typed(gmr_t *mreg, void *src, int src_count, MPI_Datatype src_type,
         MPI_Info_set(async_info, "async_config", "on");
       }
 
-      MPI_Win_info_set(mreg->window, async_info);
+      MPI_Win_set_info(mreg->window, async_info);
       MPI_Info_free(&async_info);
       MPI_Put(src, src_count, src_type, grp_proc,
               (MPI_Aint) disp, dst_count, dst_type, mreg->window);
@@ -535,7 +535,7 @@ int gmr_get_typed(gmr_t *mreg, void *src, int src_count, MPI_Datatype src_type,
         MPI_Info_set(async_info, "async_config", "on");
       }
 
-      MPI_Win_info_set(mreg->window, async_info);
+      MPI_Win_set_info(mreg->window, async_info);
       MPI_Info_free(&async_info);
       MPI_Get(dst, dst_count, dst_type, grp_proc,
               (MPI_Aint) disp, src_count, src_type, mreg->window);
@@ -605,7 +605,7 @@ int gmr_accumulate_typed(gmr_t *mreg, void *src, int src_count, MPI_Datatype src
         MPI_Info_set(async_info, "async_config", "on");
       }
 
-      MPI_Win_info_set(mreg->window, async_info);
+      MPI_Win_set_info(mreg->window, async_info);
       MPI_Info_free(&async_info);
   MPI_Accumulate(src, src_count, src_type, grp_proc, (MPI_Aint) disp, dst_count, dst_type, MPI_SUM, mreg->window);
 
